@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cantina Labs — Multi-Platform Software &amp; Automations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="icon" type="image/png" href="/assets/cl-transparent.png">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:#070604; --bg2:#0f0d09; --bg3:#161309;
+      --amber:#f0a500; --amber-dim:#a06e00;
+      --teal:#00c9a7;  --teal-dim:#007a66;
+      --cream:#f0ead8; --muted:#7a7060;
+      --border:rgba(240,165,0,0.12);
+      --font-display:'Bebas Neue',sans-serif;
+      --font-serif:'DM Serif Display',serif;
+      --font-body:'Crimson Pro',serif;
+      --font-mono:'DM Mono',monospace;
+    }
+    html.light {
+      --bg:#f7f4ee; --bg2:#eeeae0; --bg3:#e5e0d4;
+      --amber:#b87800; --amber-dim:#c88a10;
+      --teal:#007a66;  --teal-dim:#005a4d;
+      --cream:#1a160e; --muted:#8a7e6a;
+      --border:rgba(120,80,0,0.14);
+    }
+    html.light body::after { opacity:0.018; }
+    html.light #starfield  { opacity:0.2; }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{
+      background:var(--bg); color:var(--cream);
+      font-family:var(--font-body); font-size:18px; line-height:1.7;
+      overflow-x:hidden; cursor:none;
+      transition:background .4s,color .4s;
+    }
+    a{color:inherit;text-decoration:none;}
+
+    /* Cursor */
+    #cursor{
+      position:fixed;top:0;left:0;z-index:9999;pointer-events:none;
+      width:12px;height:12px;background:var(--amber);border-radius:50%;
+      transform:translate(-50%,-50%);
+      transition:background .2s,width .2s,height .2s;
+    }
+    #cursor-ring{
+      position:fixed;top:0;left:0;z-index:9998;pointer-events:none;
+      width:36px;height:36px;border:1.5px solid var(--amber);border-radius:50%;
+      transform:translate(-50%,-50%);
+      transition:border-color .2s,width .25s,height .25s,opacity .2s;
+      opacity:.55;
+    }
+    body.hovering #cursor      {width:6px;height:6px;background:var(--teal);}
+    body.hovering #cursor-ring {width:56px;height:56px;border-color:var(--teal);opacity:.3;}
+
+    /* Starfield */
+    #starfield{position:fixed;inset:0;z-index:0;pointer-events:none;transition:opacity .5s;}
+
+    /* Noise */
+    body::after{
+      content:'';position:fixed;inset:0;z-index:1;pointer-events:none;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity:.032;transition:opacity .4s;
+    }
+
+    /* Nav */
+    nav{
+      position:fixed;top:0;left:0;right:0;z-index:100;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:28px 60px;
+      transition:padding .4s,background .4s,border-bottom .4s;
+    }
+    .nav-right{
+      display:flex;align-items:center;gap:12px;
+    }
+    nav.scrolled{
+      padding:16px 60px;
+      background:rgba(7,6,4,.88);backdrop-filter:blur(16px);
+      border-bottom:1px solid var(--border);
+    }
+    html.light nav.scrolled{background:rgba(247,244,238,.92);}
+    .nav-logo{font-family:var(--font-display);font-size:22px;letter-spacing:.08em;color:var(--amber);}
+    .nav-logo span{color:var(--cream);opacity:.7;}
+    .nav-links{display:flex;gap:40px;list-style:none;font-family:var(--font-mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;}
+    .nav-links a{color:var(--muted);transition:color .2s;position:relative;}
+    .nav-links a::after{content:'';position:absolute;bottom:-3px;left:0;right:100%;height:1px;background:var(--amber);transition:right .3s;}
+    .nav-links a:hover{color:var(--cream);}
+    .nav-links a:hover::after{right:0;}
+
+    #theme-toggle{
+      background:none;border:1px solid var(--border);color:var(--muted);
+      cursor:none;width:38px;height:38px;display:flex;align-items:center;
+      justify-content:center;border-radius:50%;font-size:16px;padding:0;
+      transition:border-color .25s,color .25s,transform .3s;flex-shrink:0;
+    }
+    #theme-toggle:hover{border-color:var(--amber-dim);color:var(--amber);transform:rotate(22deg);}
+
+    /* Section */
+    .section{position:relative;z-index:2;}
+
+    /* Hero */
+    #hero{
+      min-height:100vh;display:flex;flex-direction:column;
+      justify-content:center;align-items:flex-start;
+      padding:0 60px;position:relative;overflow:hidden;
+    }
+    .hero-content{display:flex;flex-direction:column;align-items:flex-start;will-change:transform;}
+    .hero-eyebrow{
+      font-family:var(--font-mono);font-size:11px;letter-spacing:.3em;
+      text-transform:uppercase;color:var(--amber);margin-bottom:28px;
+      opacity:0;transform:translateY(10px);
+      animation:fadeUp .7s ease .3s forwards;
+    }
+    .hero-title{
+      font-family:var(--font-display);font-size:clamp(72px,12vw,180px);
+      line-height:.9;letter-spacing:.02em;margin-bottom:32px;
+    }
+    .hero-title .line{display:block;overflow:hidden;}
+    .hero-title .line span{display:block;transform:translateY(110%);animation:slideUp .85s cubic-bezier(.16,1,.3,1) forwards;}
+    .hero-title .line:nth-child(1) span{animation-delay:.4s;}
+    .hero-title .line:nth-child(2) span{animation-delay:.55s;color:var(--amber);}
+    .hero-title .line:nth-child(3) span{animation-delay:.7s;}
+    .hero-sub{
+      font-size:20px;font-weight:300;color:var(--muted);max-width:520px;
+      line-height:1.6;margin-bottom:52px;
+      opacity:0;transform:translateY(14px);
+      animation:fadeUp .7s ease 1s forwards;
+    }
+    .hero-sub em{color:var(--cream);font-style:italic;}
+    .hero-cta{display:flex;gap:20px;align-items:center;opacity:0;animation:fadeUp .7s ease 1.15s forwards;}
+
+    .btn-primary{
+      font-family:var(--font-mono);font-size:11px;letter-spacing:.15em;
+      text-transform:uppercase;padding:16px 36px;
+      background:var(--amber);color:var(--bg);border:none;cursor:none;
+      position:relative;overflow:hidden;transition:transform .2s;
+    }
+    .btn-primary::before{
+      content:'';position:absolute;inset:0;background:var(--teal);
+      transform:translateX(-101%);transition:transform .35s cubic-bezier(.77,0,.175,1);
+    }
+    .btn-primary:hover::before{transform:translateX(0);}
+    .btn-primary span{position:relative;z-index:1;}
+    .btn-primary:hover{transform:translateY(-2px);}
+
+    .btn-ghost{
+      font-family:var(--font-mono);font-size:11px;letter-spacing:.15em;
+      text-transform:uppercase;color:var(--muted);
+      display:flex;align-items:center;gap:10px;
+      transition:color .2s;cursor:none;
+    }
+    .btn-ghost:hover{color:var(--cream);}
+    .btn-ghost .arrow{transition:transform .2s;}
+    .btn-ghost:hover .arrow{transform:translateX(5px);}
+
+    .hero-scroll-hint{
+      position:absolute;bottom:40px;left:60px;
+      display:flex;align-items:center;gap:16px;
+      font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+      color:var(--muted);opacity:0;animation:fadeUp .7s ease 1.4s forwards;
+    }
+    .scroll-line{
+      width:48px;height:1px;
+      background:linear-gradient(90deg,var(--amber),transparent);
+      animation:scrollLine 2.5s ease-in-out 2s infinite;
+    }
+    @keyframes scrollLine{0%,100%{width:48px;opacity:1;}50%{width:20px;opacity:.4;}}
+
+    /* About */
+    #about{
+      padding:140px 60px;display:grid;grid-template-columns:1fr 1fr;
+      gap:80px;align-items:center;border-top:1px solid var(--border);
+    }
+    .about-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--amber);margin-bottom:24px;}
+    .about-heading{font-family:var(--font-serif);font-size:clamp(36px,4vw,56px);line-height:1.15;margin-bottom:28px;font-style:italic;}
+    .about-heading em{font-style:normal;color:var(--amber);}
+    .about-body{color:var(--muted);font-size:17px;font-weight:300;}
+    .about-body p{margin-bottom:16px;}
+    .about-body strong{color:var(--cream);font-weight:400;}
+    .about-stats{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
+    .stat-cell{
+      background:var(--bg2);border:1px solid var(--border);padding:36px 32px;
+      transition:background .3s,border-color .3s;
+    }
+    .stat-cell:hover{background:var(--bg3);border-color:rgba(240,165,0,.3);}
+    .stat-number{font-family:var(--font-display);font-size:58px;line-height:1;color:var(--amber);margin-bottom:8px;}
+    .stat-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);}
+
+    /* Products */
+    #products{padding:140px 60px;border-top:1px solid var(--border);}
+    .products-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:72px;}
+    .section-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--amber);margin-bottom:16px;}
+    .section-title{font-family:var(--font-display);font-size:clamp(44px,6vw,80px);line-height:.95;letter-spacing:.01em;}
+    .section-count{font-family:var(--font-mono);font-size:11px;letter-spacing:.15em;color:var(--muted);}
+    .products-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
+
+    .product-card{
+      background:var(--bg2);border:1px solid var(--border);
+      padding:52px 48px;position:relative;overflow:hidden;cursor:none;
+      transition:border-color .35s,background .4s,transform .6s cubic-bezier(.16,1,.3,1);
+    }
+    .product-card::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--amber),transparent);
+      transform:scaleX(0);transform-origin:left;
+      transition:transform .5s cubic-bezier(.77,0,.175,1);
+    }
+    .product-card::after{
+      content:'';position:absolute;inset:0;
+      background:radial-gradient(ellipse 70% 70% at 50% 120%,rgba(240,165,0,.05) 0%,transparent 70%);
+      opacity:0;transition:opacity .5s;
+    }
+    .product-card:hover{border-color:rgba(240,165,0,.28);}
+    .product-card:hover::before{transform:scaleX(1);}
+    .product-card:hover::after{opacity:1;}
+    .product-card.teal::before{background:linear-gradient(90deg,var(--teal),transparent);}
+    .product-card.teal::after{background:radial-gradient(ellipse 70% 70% at 50% 120%,rgba(0,201,167,.05) 0%,transparent 70%);}
+    .product-card.teal:hover{border-color:rgba(0,201,167,.28);}
+
+    .card-inner{position:relative;z-index:1;}
+    .card-tag-row{display:flex;gap:8px;align-items:center;margin-bottom:28px;flex-wrap:wrap;}
+    .tag{font-family:var(--font-mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase;padding:5px 10px;border:1px solid;line-height:1;}
+    .tag-amber{border-color:var(--amber-dim);color:var(--amber);}
+    .tag-teal {border-color:var(--teal-dim);color:var(--teal);}
+    .tag-muted{border-color:rgba(122,112,96,.4);color:var(--muted);}
+
+    .card-icon{width:56px;height:56px;margin-bottom:28px;}
+    .card-icon svg{width:100%;height:100%;}
+    .card-title{font-family:var(--font-display);font-size:42px;letter-spacing:.02em;line-height:1;margin-bottom:12px;}
+    .card-subtitle{font-family:var(--font-serif);font-style:italic;font-size:16px;color:var(--muted);margin-bottom:22px;}
+    .card-desc{font-size:16px;font-weight:300;color:var(--muted);line-height:1.65;margin-bottom:36px;}
+    .card-features{display:flex;flex-direction:column;gap:8px;margin-bottom:36px;}
+    .feature-row{display:flex;align-items:baseline;gap:12px;font-size:14px;font-family:var(--font-mono);font-weight:300;color:var(--muted);}
+    .feature-row::before{content:'—';color:var(--amber);flex-shrink:0;}
+    .teal .feature-row::before{color:var(--teal);}
+
+    .card-link{
+      display:inline-flex;align-items:center;gap:10px;
+      font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+      color:var(--amber);border-bottom:1px solid rgba(240,165,0,.3);padding-bottom:4px;
+      transition:gap .2s,border-color .2s;
+    }
+    .card-link:hover{gap:16px;border-color:var(--amber);}
+    .teal .card-link{color:var(--teal);border-color:rgba(0,201,167,.3);}
+    .teal .card-link:hover{border-color:var(--teal);}
+
+    .card-status-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--amber);animation:pulseA 2.5s ease-in-out infinite;margin-right:4px;}
+    .card-status-dot.teal{background:var(--teal);animation:pulseT 2.5s ease-in-out infinite;}
+    .card-status-dot.soon{background:var(--muted);animation:none;}
+    @keyframes pulseA{0%,100%{box-shadow:0 0 0 0 rgba(240,165,0,.6);}50%{box-shadow:0 0 0 5px rgba(240,165,0,0);}}
+    @keyframes pulseT{0%,100%{box-shadow:0 0 0 0 rgba(0,201,167,.6);}50%{box-shadow:0 0 0 5px rgba(0,201,167,0);}}
+
+    .product-card.wide{grid-column:span 2;display:grid;grid-template-columns:1fr 1fr;gap:60px;}
+    .product-card.wide .card-inner{grid-column:1;}
+    .wide-visual{grid-column:2;display:flex;align-items:center;justify-content:center;padding:20px;}
+
+    .pricing-mini{background:rgba(0,0,0,.3);border:1px solid var(--border);overflow:hidden;}
+    html.light .pricing-mini{background:rgba(0,0,0,.06);}
+    .pricing-row{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid var(--border);}
+    .pricing-row:last-child{border-bottom:none;}
+    .pricing-cell{padding:13px 14px;font-family:var(--font-mono);font-size:11px;color:var(--muted);border-right:1px solid var(--border);}
+    .pricing-cell:last-child{border-right:none;}
+    .pricing-cell.header{color:var(--cream);font-weight:500;background:rgba(240,165,0,.06);}
+    .pricing-cell .check{color:var(--teal);}
+    .pricing-cell .cross{color:var(--muted);opacity:.4;}
+
+    /* Stack */
+    #stack{padding:100px 60px;border-top:1px solid var(--border);overflow:hidden;}
+    .stack-header{margin-bottom:56px;}
+    .marquee-wrapper{
+      display:flex;flex-direction:column;gap:16px;
+      mask-image:linear-gradient(90deg,transparent 0%,black 10%,black 90%,transparent 100%);
+      -webkit-mask-image:linear-gradient(90deg,transparent 0%,black 10%,black 90%,transparent 100%);
+    }
+    .marquee-track{display:flex;gap:16px;width:max-content;animation:marquee 30s linear infinite;}
+    .marquee-track.reverse{animation-direction:reverse;}
+    @keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+    .stack-pill{
+      flex-shrink:0;font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;
+      text-transform:uppercase;padding:12px 22px;border:1px solid var(--border);
+      color:var(--muted);background:var(--bg2);white-space:nowrap;
+      transition:border-color .3s,color .3s,background .4s;
+    }
+    .stack-pill:hover{border-color:var(--amber-dim);color:var(--amber);}
+
+    /* Contact */
+    #contact{padding:140px 60px;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;}
+    .contact-heading{font-family:var(--font-display);font-size:clamp(56px,8vw,110px);line-height:.9;letter-spacing:.02em;margin-bottom:28px;}
+    .contact-heading .accent{color:var(--amber);}
+    .contact-tagline{font-size:18px;font-weight:300;color:var(--muted);margin-bottom:48px;}
+    .contact-links{display:flex;flex-direction:column;}
+    .contact-link-item{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:22px 0;border-bottom:1px solid var(--border);
+      font-family:var(--font-mono);font-size:11px;letter-spacing:.15em;text-transform:uppercase;
+      color:var(--muted);transition:color .2s,padding-left .2s;cursor:none;
+    }
+    .contact-link-item:hover{color:var(--cream);padding-left:8px;}
+    .contact-link-item:first-child{border-top:1px solid var(--border);}
+    .contact-link-item .arrow-icon{opacity:.4;transition:opacity .2s,transform .2s;}
+    .contact-link-item:hover .arrow-icon{opacity:1;transform:rotate(-45deg);}
+
+    .contact-form{display:flex;flex-direction:column;gap:20px;}
+    .form-group{display:flex;flex-direction:column;gap:8px;}
+    .form-label{font-family:var(--font-mono);font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--muted);}
+    .form-input,.form-textarea{
+      background:var(--bg2);border:1px solid var(--border);color:var(--cream);
+      font-family:var(--font-body);font-size:16px;font-weight:300;
+      padding:16px 20px;outline:none;
+      transition:border-color .25s,background .25s,color .4s;
+      resize:none;cursor:none;
+    }
+    .form-input:focus,.form-textarea:focus{border-color:rgba(240,165,0,.5);background:var(--bg3);}
+    .form-textarea{min-height:140px;}
+    .form-submit{
+      font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+      padding:18px 40px;background:transparent;color:var(--amber);
+      border:1px solid var(--amber-dim);cursor:none;
+      position:relative;overflow:hidden;transition:color .35s;align-self:flex-start;
+    }
+    .form-submit::before{content:'';position:absolute;inset:0;background:var(--amber);transform:translateY(101%);transition:transform .4s cubic-bezier(.77,0,.175,1);}
+    .form-submit:hover{color:var(--bg);}
+    .form-submit:hover::before{transform:translateY(0);}
+    .form-submit span{position:relative;z-index:1;}
+
+    footer{
+      padding:48px 60px;border-top:1px solid var(--border);
+      display:flex;justify-content:space-between;align-items:center;
+      position:relative;z-index:2;
+    }
+    .footer-logo{font-family:var(--font-display);font-size:20px;letter-spacing:.08em;color:var(--amber);}
+    .footer-copy{font-family:var(--font-mono);font-size:10px;letter-spacing:.15em;color:var(--muted);}
+    .footer-links{display:flex;gap:32px;list-style:none;font-family:var(--font-mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase;}
+    .footer-links a{color:var(--muted);transition:color .2s;}
+    .footer-links a:hover{color:var(--cream);}
+
+    .glow-line{position:absolute;pointer-events:none;}
+    .glow-line-h{
+      left:0;right:0;height:1px;
+      background:linear-gradient(90deg,transparent 0%,var(--amber) 40%,var(--teal) 70%,transparent 100%);
+      opacity:.15;animation:glowShift 8s ease-in-out infinite;
+    }
+    @keyframes glowShift{0%,100%{opacity:.1;}50%{opacity:.25;}}
+
+    .reveal{opacity:0;transform:translateY(30px);transition:opacity .8s,transform .8s cubic-bezier(.16,1,.3,1);}
+    .reveal.visible{opacity:1;transform:translateY(0);}
+    .reveal-delay-1{transition-delay:.1s;}
+    .reveal-delay-2{transition-delay:.2s;}
+    .reveal-delay-3{transition-delay:.3s;}
+
+    @keyframes fadeUp {to{opacity:1;transform:translateY(0);}}
+    @keyframes slideUp{to{transform:translateY(0);}}
+
+    /* Desktop: QuickAHJ features grid */
+    .card-features-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 32px;}
+
+    /* ===== MOBILE STYLES ===== */
+    @media(max-width:900px){
+      /* Nav */
+      nav{padding:20px 24px;}
+      nav.scrolled{padding:14px 24px;}
+      .nav-links{display:none !important;}
+      #menu-toggle{display:flex !important;}
+      
+      /* Hero */
+      #hero{padding:0 20px;}
+      .hero-scroll-hint{left:20px;}
+      .hero-title{font-size:clamp(48px, 14vw, 72px);}
+      .hero-sub{font-size:16px;}
+      
+      /* About */
+      #about{grid-template-columns:1fr;padding:80px 24px;gap:48px;}
+      
+      /* Products - SINGLE COLUMN */
+      #products{padding:80px 24px;}
+      .products-grid{
+        display:flex !important;
+        flex-direction:column !important;
+        gap:16px !important;
+      }
+      .product-card,
+      .product-card.wide,
+      .product-card.teal{
+        display:block !important;
+        width:100% !important;
+        grid-column:auto !important;
+        min-height:auto !important;
+        height:auto !important;
+        padding:32px 24px;
+      }
+      .product-card .card-inner{
+        display:block !important;
+        max-width:100% !important;
+        grid-column:auto !important;
+      }
+      .wide-visual{display:none !important;}
+      .section-title{font-size:clamp(32px, 6vw, 44px);}
+      .card-title{font-size:28px;}
+      .card-desc{font-size:15px;line-height:1.6;}
+      .card-features{margin-bottom:28px;}
+      .card-features-grid{display:flex !important;flex-direction:column !important;}
+      .feature-row{font-size:13px;}
+      
+      /* Stack */
+      #stack{padding:60px 24px;}
+      
+      /* Contact */
+      #contact{grid-template-columns:1fr;padding:80px 24px;gap:48px;}
+      
+      /* Footer */
+      footer{flex-direction:column;gap:20px;padding:32px 24px;}
+      
+      /* Disable reveal animations on mobile */
+      .reveal{opacity:1 !important;transform:translateY(0) !important;}
+    }
+
+    /* Disable custom cursor on touch devices */
+    @media (hover: none) and (pointer: coarse) {
+      body { cursor: auto; }
+      #cursor, #cursor-ring { display: none; }
+      a, button, .product-card, .form-input, .form-textarea { cursor: pointer; }
+    }
+
+    /* Mobile menu */
+    #menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      font-size: 22px;
+      color: var(--cream);
+      cursor: pointer;
+      padding: 0;
+      width: 38px;
+      height: 38px;
+      align-items: center;
+      justify-content: center;
+      transition: color .2s;
+    }
+    #menu-toggle:hover { color: var(--amber); }
+
+    #mobile-menu {
+      position: fixed;
+      top: 72px;
+      left: 0;
+      right: 0;
+      background: var(--bg);
+      display: none;
+      flex-direction: column;
+      padding: 20px 24px;
+      gap: 18px;
+      border-bottom: 1px solid var(--border);
+      z-index: 99;
+    }
+    #mobile-menu a {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    #mobile-menu.open { display: flex; }
+
+    /* Tap improvements */
+    .btn-primary, .form-submit { min-height: 48px; }
+
+    /* Reduce motion */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+  </style>
+</head>
+<body>
+
+  <div id="cursor"></div>
+  <div id="cursor-ring"></div>
+  <canvas id="starfield"></canvas>
+
+  <nav id="navbar">
+    <div class="nav-logo">Cantina<span>Labs</span></div>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#products">Products</a></li>
+      <li><a href="#stack">Stack</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <div class="nav-right">
+      <button id="theme-toggle" title="Toggle light/dark mode">🌙</button>
+      <button id="menu-toggle" title="Menu">☰</button>
+    </div>
+  </nav>
+
+  <div id="mobile-menu">
+    <a href="#about" class="mobile-menu-link">About</a>
+    <a href="#products" class="mobile-menu-link">Products</a>
+    <a href="#stack" class="mobile-menu-link">Stack</a>
+    <a href="#contact" class="mobile-menu-link">Contact</a>
+  </div>
+
+  <section id="hero" class="section">
+    <div class="glow-line glow-line-h" style="bottom:0;"></div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Multi-Platform Software &amp; Automations</p>
+      <h1 class="hero-title">
+        <span class="line"><span>Build</span></span>
+        <span class="line"><span>Different.</span></span>
+        <span class="line"><span>Ship Fast.</span></span>
+      </h1>
+      <p class="hero-sub">
+        We craft   <em>polished, purposeful software</em>   across mobile, web, and desktop —
+        from weekend-ready games to professional productivity tools.
+      </p>
+      <div class="hero-cta">
+        <a href="#products" class="btn-primary"><span>View Our Work</span></a>
+      </div>
+    </div>
+    <div class="hero-scroll-hint">
+      <span class="scroll-line"></span>
+      <span>Scroll to explore</span>
+    </div>
+  </section>
+
+  <section id="about" class="section">
+    <div class="reveal">
+      <p class="about-label">Who We Are</p>
+      <h2 class="about-heading">Software that<br/><em>actually</em><br/>gets things done.</h2>
+      <div class="about-body">
+        <p>Cantina Labs is a software organization obsessed with <strong>quality, clarity, and craftsmanship</strong>. We don't build bloated platforms — we build focused tools that solve real problems.</p>
+        <p>From consumer-facing mobile apps to professional-grade browser extensions, our work spans the full spectrum of modern software development. Every product ships with care.</p>
+      </div>
+    </div>
+    <div class="about-stats reveal reveal-delay-2">
+      <div class="stat-cell"><div class="stat-number">4</div><div class="stat-label">Products Shipped</div></div>
+      <div class="stat-cell"><div class="stat-number">3</div><div class="stat-label">Platforms Covered</div></div>
+      <div class="stat-cell"><div class="stat-number">∞</div><div class="stat-label">Automations Possible</div></div>
+      <div class="stat-cell"><div class="stat-number">1</div><div class="stat-label">Standard: Excellence</div></div>
+    </div>
+  </section>
+
+  <section id="products" class="section">
+    <div class="products-header reveal">
+      <div>
+        <p class="section-label">What We've Built</p>
+        <h2 class="section-title">Our<br/>Products</h2>
+      </div>
+      <span class="section-count">04 projects</span>
+    </div>
+    <div class="products-grid">
+
+      <div class="product-card reveal">
+        <div class="card-inner">
+          <div class="card-tag-row">
+            <span class="tag tag-amber"><span class="card-status-dot"></span> Live</span>
+            <span class="tag tag-muted">Android</span>
+            <span class="tag tag-muted">Google Play</span>
+          </div>
+          <div class="card-icon">
+            <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="6" width="20" height="28" rx="2" fill="none" stroke="#f0a500" stroke-width="1.5"/>
+              <rect x="32" y="22" width="20" height="28" rx="2" fill="none" stroke="#f0a500" stroke-width="1.5" opacity="0.5"/>
+              <text x="6" y="19" font-family="serif" font-size="11" fill="#f0a500">A</text>
+              <path d="M14 23 L17 28 L20 23 L23 28" stroke="#f0a500" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="card-title">Just Blackjack</h3>
+          <p class="card-subtitle">Simple. Social. Straight to the point.</p>
+          <p class="card-desc">A no-nonsense blackjack app for Android. Play solo against the house, jump into online matchmaking, or host a private lobby with friends — all without the casino fluff.</p>
+          <div class="card-features">
+            <div class="feature-row">Solo, Online &amp; Private Lobby Modes</div>
+            <div class="feature-row">In-Game Currency &amp; Prestige System</div>
+            <div class="feature-row">Clean, Distraction-Free UI</div>
+          </div>
+          <a href="https://just-blackjack.com" target="_blank" class="card-link">just-blackjack.com →</a>
+        </div>
+      </div>
+
+      <div class="product-card teal reveal reveal-delay-2">
+        <div class="card-inner">
+          <div class="card-tag-row">
+            <span class="tag tag-muted"><span class="card-status-dot soon"></span> Coming Soon</span>
+            <span class="tag tag-teal">iOS</span>
+            <span class="tag tag-teal">Android</span>
+          </div>
+          <div class="card-icon">
+            <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <text x="4" y="34" font-family="serif" font-size="30" fill="#00c9a7" opacity="0.9">あ</text>
+              <text x="30" y="22" font-family="serif" font-size="18" fill="#00c9a7" opacity="0.45">ア</text>
+            </svg>
+          </div>
+          <h3 class="card-title">KanaType</h3>
+          <p class="card-subtitle">Learn Hiragana &amp; Katakana the right way.</p>
+          <p class="card-desc">A focused, immersion-friendly app for learning the Japanese alphabet. Master Hiragana, Katakana, and foundational vocabulary — the ideal launchpad for your Japanese journey.</p>
+          <div class="card-features">
+            <div class="feature-row">Full Hiragana &amp; Katakana Curriculum</div>
+            <div class="feature-row">Common Words &amp; Phrases</div>
+            <div class="feature-row">Immersion-Method Approach</div>
+          </div>
+          <span class="card-link" style="opacity:.45;pointer-events:none;">Launching Soon</span>
+        </div>
+      </div>
+
+      <div class="product-card wide reveal">
+        <div class="card-inner">
+          <div class="card-tag-row">
+            <span class="tag tag-muted"><span class="card-status-dot soon"></span> Coming Soon</span>
+            <span class="tag tag-amber">iOS</span>
+            <span class="tag tag-amber">Android</span>
+            <span class="tag tag-muted">Subscription</span>
+          </div>
+          <div class="card-icon">
+            <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 44 Q10 16 28 10 Q46 16 46 44" stroke="#f0a500" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <circle cx="28" cy="28" r="7" stroke="#f0a500" stroke-width="1.5" fill="none"/>
+              <line x1="28" y1="10" x2="28" y2="18" stroke="#f0a500" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h3 class="card-title">WhatsForDinner?</h3>
+          <p class="card-subtitle">The recipe manager your whole household actually wants.</p>
+          <p class="card-desc">A subscription-based recipe platform built around households. Save recipes, build cookbooks, generate shopping lists from meal plans, and keep the whole family on the same page.</p>
+          <div class="card-features">
+            <div class="feature-row">Household sharing — everyone contributes</div>
+            <div class="feature-row">Meal planning + auto shopping lists</div>
+            <div class="feature-row">Up to 500 recipes &amp; 100 cookbooks (Pro)</div>
+          </div>
+          <span class="card-link" style="opacity:.45;pointer-events:none;">Launching Soon</span>
+        </div>
+        <div class="wide-visual">
+          <div class="pricing-mini" style="width:100%;">
+            <div class="pricing-row">
+              <div class="pricing-cell header">Feature</div>
+              <div class="pricing-cell header" style="color:var(--muted)">Free</div>
+              <div class="pricing-cell header" style="color:var(--amber)">Pro ✦</div>
+            </div>
+            <div class="pricing-row">
+              <div class="pricing-cell">Recipes</div>
+              <div class="pricing-cell">25</div>
+              <div class="pricing-cell" style="color:var(--amber)">500</div>
+            </div>
+            <div class="pricing-row">
+              <div class="pricing-cell">Cookbooks</div>
+              <div class="pricing-cell">2</div>
+              <div class="pricing-cell" style="color:var(--amber)">100</div>
+            </div>
+            <div class="pricing-row">
+              <div class="pricing-cell">Meal Planning</div>
+              <div class="pricing-cell"><span class="cross">✕</span></div>
+              <div class="pricing-cell"><span class="check">✓</span></div>
+            </div>
+            <div class="pricing-row">
+              <div class="pricing-cell">Shopping Lists</div>
+              <div class="pricing-cell"><span class="cross">✕</span></div>
+              <div class="pricing-cell"><span class="check">✓</span></div>
+            </div>
+            <div class="pricing-row">
+              <div class="pricing-cell">Auto-gen from Plan</div>
+              <div class="pricing-cell"><span class="cross">✕</span></div>
+              <div class="pricing-cell"><span class="check">✓</span></div>
+            </div>
+            <div class="pricing-row" style="border-bottom:none;">
+              <div class="pricing-cell">Household</div>
+              <div class="pricing-cell"><span class="check">✓</span></div>
+              <div class="pricing-cell"><span class="check">✓</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="product-card teal reveal reveal-delay-1">
+        <div class="card-inner">
+          <div class="card-tag-row">
+            <span class="tag tag-teal"><span class="card-status-dot teal"></span> Beta</span>
+            <span class="tag tag-muted">Chrome Extension</span>
+            <span class="tag tag-muted">Professional</span>
+          </div>
+          <div class="card-icon">
+            <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="6" y="10" width="44" height="36" rx="3" stroke="#00c9a7" stroke-width="1.5" fill="none"/>
+              <line x1="6" y1="20" x2="50" y2="20" stroke="#00c9a7" stroke-width="1" opacity="0.5"/>
+              <circle cx="12" cy="15" r="2" fill="#00c9a7" opacity="0.6"/>
+              <circle cx="19" cy="15" r="2" fill="#00c9a7" opacity="0.4"/>
+              <circle cx="26" cy="15" r="2" fill="#00c9a7" opacity="0.2"/>
+              <text x="10" y="34" font-family="monospace" font-size="9" fill="#00c9a7" opacity="0.8">AHJ_DATA</text>
+              <text x="10" y="44" font-family="monospace" font-size="9" fill="#00c9a7" opacity="0.4">NEC 2023 / IFC</text>
+            </svg>
+          </div>
+          <h3 class="card-title">QuickAHJ</h3>
+          <p class="card-subtitle">AHJ lookup — without hosting a database.</p>
+          <p class="card-desc">A Chrome extension that replaces the overhead of a self-hosted AHJ database. Enter any US address with your AHJRegistry API key to instantly surface permit timelines, contact information, code versioning, and more — right in your browser.</p>
+          <div class="card-features card-features-grid">
+            <div class="feature-row">US Address Lookup</div>
+            <div class="feature-row">Permit Timelines</div>
+            <div class="feature-row">Contact Information</div>
+            <div class="feature-row">NEC &amp; IFC Versioning</div>
+            <div class="feature-row">AHJRegistry Integration</div>
+            <div class="feature-row">No Database Required</div>
+          </div>
+          <a href="https://github.com/art-was-here/quickAHJ" target="_blank" class="card-link">View on GitHub →</a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="stack" class="section">
+    <div class="stack-header reveal">
+      <p class="section-label">Technologies</p>
+      <h2 class="section-title" style="font-size:clamp(36px,5vw,64px);">Our Stack</h2>
+    </div>
+    <div class="marquee-wrapper">
+      <div class="marquee-track">
+        <span class="stack-pill">Android / Kotlin</span><span class="stack-pill">iOS / Swift</span>
+        <span class="stack-pill">React Native</span><span class="stack-pill">Flutter</span>
+        <span class="stack-pill">TypeScript</span><span class="stack-pill">Firebase</span>
+        <span class="stack-pill">Android / Kotlin</span><span class="stack-pill">iOS / Swift</span>
+        <span class="stack-pill">React Native</span><span class="stack-pill">Flutter</span>
+        
+      </div>
+      <div class="marquee-track reverse">
+        <span class="stack-pill">Google Play Store</span><span class="stack-pill">iOS App Store</span>
+        <span class="stack-pill">PostgreSQL</span><span class="stack-pill">Dart</span>
+        <span class="stack-pill">Google Play Store</span><span class="stack-pill">iOS App Store</span>
+        <span class="stack-pill">PostgreSQL</span><span class="stack-pill">Dart</span>
+        <span class="stack-pill">TypeScript</span><span class="stack-pill">Firebase</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="section">
+    <div class="reveal">
+      <h2 class="contact-heading">Let's<br/><span class="accent">Build</span><br/>Together.</h2>
+      <p class="contact-tagline">Have a project in mind? Questions about our products?<br/>We'd love to hear from you.</p>
+      <div class="contact-links">
+        <a href="https://github.com/art-was-here/quickAHJ" target="_blank" class="contact-link-item">
+          <span>GitHub</span><span class="arrow-icon">↗</span>
+        </a>
+        <a href="https://just-blackjack.com" target="_blank" class="contact-link-item">
+          <span>Just Blackjack Site</span><span class="arrow-icon">↗</span>
+        </a>
+        <a href="mailto:hello@cantinalabs.dev" class="contact-link-item">
+          <span>hello@cantinalabs.dev</span><span class="arrow-icon">↗</span>
+        </a>
+      </div>
+    </div>
+    <div class="contact-form reveal reveal-delay-2">
+      <div class="form-group">
+        <label class="form-label">Your Name</label>
+        <input type="text" class="form-input" placeholder="Jane Smith" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-input" placeholder="jane@company.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">What are you building?</label>
+        <textarea class="form-textarea" placeholder="Tell us about your project, idea, or question..."></textarea>
+      </div>
+      <button class="form-submit"><span>Send Message</span></button>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-logo">Cantina Labs</div>
+    <span class="footer-copy">© 2025 Cantina Labs. All rights reserved.</span>
+    <ul class="footer-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#products">Products</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </footer>
+
+  <script>
+    // Cursor
+    var cursor = document.getElementById('cursor');
+    var ring   = document.getElementById('cursor-ring');
+    var mx=0, my=0, rx=0, ry=0;
+    document.addEventListener('mousemove', function(e){ mx=e.clientX; my=e.clientY; cursor.style.left=mx+'px'; cursor.style.top=my+'px'; });
+    (function tick(){ rx+=(mx-rx)*.12; ry+=(my-ry)*.12; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(tick); })();
+    document.querySelectorAll('a,button,.product-card,.stat-cell,.contact-link-item,.stack-pill,.form-input,.form-textarea').forEach(function(el){
+      el.addEventListener('mouseenter',function(){ document.body.classList.add('hovering'); });
+      el.addEventListener('mouseleave',function(){ document.body.classList.remove('hovering'); });
+    });
+
+    // Starfield
+    var canvas=document.getElementById('starfield'), ctx=canvas.getContext('2d'), W, H, stars=[], frame=0;
+    function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+    resize(); window.addEventListener('resize',resize);
+    function initStars(n){ stars=[]; for(var i=0;i<n;i++) stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.1+.2,a:Math.random(),spd:Math.random()*.003+.001,ph:Math.random()*Math.PI*2}); }
+    initStars(200);
+    function draw(){
+      ctx.clearRect(0,0,W,H); frame++;
+      stars.forEach(function(s){ var a=(Math.sin(frame*s.spd+s.ph)*.4+.6)*s.a*.6; ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fillStyle='rgba(240,200,120,'+a+')'; ctx.fill(); });
+      var g=ctx.createRadialGradient(W*.7,H*.3,0,W*.7,H*.3,W*.45); g.addColorStop(0,'rgba(240,165,0,.025)'); g.addColorStop(1,'transparent'); ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+      var g2=ctx.createRadialGradient(W*.2,H*.8,0,W*.2,H*.8,W*.4); g2.addColorStop(0,'rgba(0,201,167,.018)'); g2.addColorStop(1,'transparent'); ctx.fillStyle=g2; ctx.fillRect(0,0,W,H);
+      requestAnimationFrame(draw);
+    }
+    draw();
+
+    // Navbar
+    var navbar=document.getElementById('navbar');
+    window.addEventListener('scroll',function(){ navbar.classList.toggle('scrolled',window.scrollY>60); });
+
+    // Scroll Reveal
+    var obs=new IntersectionObserver(function(entries){ entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target); } }); },{threshold:.12});
+    document.querySelectorAll('.reveal').forEach(function(el){ obs.observe(el); });
+
+    // Hero Parallax — entire content block moves together so subtitle never drifts away from title
+    var heroContent=document.querySelector('.hero-content');
+    window.addEventListener('scroll',function(){ if(heroContent) heroContent.style.transform='translateY('+(window.scrollY*.22)+'px)'; });
+
+    // Theme Toggle
+    var themeBtn=document.getElementById('theme-toggle');
+    themeBtn.addEventListener('click',function(){
+      var light=document.documentElement.classList.toggle('light');
+      themeBtn.textContent=light?'🌑':'🌙';
+      try{ localStorage.setItem('cl-theme',light?'light':'dark'); }catch(e){}
+    });
+    try{ if(localStorage.getItem('cl-theme')==='light'){ document.documentElement.classList.add('light'); themeBtn.textContent='🌑'; } }catch(e){}
+
+    // Form
+    document.querySelector('.form-submit').addEventListener('click',function(){
+      var n=document.querySelector('.form-input[placeholder="Jane Smith"]').value.trim();
+      var em=document.querySelector('.form-input[placeholder="jane@company.com"]').value.trim();
+      var msg=document.querySelector('.form-textarea').value.trim();
+      var sp=this.querySelector('span');
+      if(!n||!em||!msg){ sp.textContent='Fill all fields ✕'; setTimeout(function(){ sp.textContent='Send Message'; },2000); return; }
+      sp.textContent='Sent ✓'; this.style.borderColor='var(--teal-dim)'; this.style.color='var(--bg)';
+    });
+
+    // Card 3D Tilt
+    if (window.innerWidth > 900) {
+      document.querySelectorAll('.product-card').forEach(function(card){
+        card.addEventListener('mousemove',function(e){
+          var r=card.getBoundingClientRect();
+          var cx=(e.clientX-r.left)/r.width-.5, cy=(e.clientY-r.top)/r.height-.5;
+          card.style.transform='perspective(900px) rotateY('+(cx*4)+'deg) rotateX('+(cy*-3)+'deg) translateZ(6px)';
+        });
+        card.addEventListener('mouseleave',function(){ card.style.transform=''; });
+      });
+    }
+
+    // Mobile menu toggle
+    var menuBtn = document.getElementById('menu-toggle');
+    var mobileMenu = document.getElementById('mobile-menu');
+
+    if(menuBtn){
+      menuBtn.addEventListener('click', function(){
+        mobileMenu.classList.toggle('open');
+      });
+      
+      // Close menu when clicking links
+      document.querySelectorAll('.mobile-menu-link').forEach(function(link){
+        link.addEventListener('click', function(){
+          mobileMenu.classList.remove('open');
+        });
+      });
+    }
+  </script>
+</body>
+</html>
