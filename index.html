@@ -753,10 +753,6 @@
         <input type="text" class="form-input" placeholder="Jane Smith" />
       </div>
       <div class="form-group">
-        <label class="form-label">Email</label>
-        <input type="email" class="form-input" placeholder="jane@company.com" />
-      </div>
-      <div class="form-group">
         <label class="form-label">What are you building?</label>
         <textarea class="form-textarea" placeholder="Tell us about your project, idea, or question..."></textarea>
       </div>
@@ -822,14 +818,16 @@
     });
     try{ if(localStorage.getItem('cl-theme')==='light'){ document.documentElement.classList.add('light'); themeBtn.textContent='🌑'; } }catch(e){}
 
-    // Form
+    // Form - mailto handler
     document.querySelector('.form-submit').addEventListener('click',function(){
       var n=document.querySelector('.form-input[placeholder="Jane Smith"]').value.trim();
-      var em=document.querySelector('.form-input[placeholder="jane@company.com"]').value.trim();
       var msg=document.querySelector('.form-textarea').value.trim();
       var sp=this.querySelector('span');
-      if(!n||!em||!msg){ sp.textContent='Fill all fields ✕'; setTimeout(function(){ sp.textContent='Send Message'; },2000); return; }
-      sp.textContent='Sent ✓'; this.style.borderColor='var(--teal-dim)'; this.style.color='var(--bg)';
+      if(!n||!msg){ sp.textContent='Fill all fields ✕'; setTimeout(function(){ sp.textContent='Send Message'; },2000); return; }
+      var subject=encodeURIComponent('New Message from '+n);
+      var body=encodeURIComponent(msg+'\n\n---\nFrom: '+n);
+      window.location.href='mailto:hello@cantinalabs.tech?subject='+subject+'&body='+body;
+      sp.textContent='Opening email...'; setTimeout(function(){ sp.textContent='Send Message'; },2000);
     });
 
     // Card 3D Tilt
