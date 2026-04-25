@@ -11,10 +11,10 @@
   <style>
     :root {
       --bg:#070604; --bg2:#0f0d09; --bg3:#161309;
-      --amber:#f0a500; --amber-dim:#a06e00;
-      --teal:#00c9a7;  --teal-dim:#007a66;
+      --amber:#7acf8a; --amber-dim:#4ea862;
+      --teal:#F5A64C;  --teal-dim:#c47a28;
       --cream:#f0ead8; --muted:#7a7060;
-      --border:rgba(240,165,0,0.12);
+      --border:rgba(122,207,138,0.14);
       --font-display:'Bebas Neue',sans-serif;
       --font-serif:'DM Serif Display',serif;
       --font-body:'Crimson Pro',serif;
@@ -22,10 +22,10 @@
     }
     html.light {
       --bg:#f7f4ee; --bg2:#eeeae0; --bg3:#e5e0d4;
-      --amber:#b87800; --amber-dim:#c88a10;
-      --teal:#007a66;  --teal-dim:#005a4d;
+      --amber:#3f8a52; --amber-dim:#5aa66d;
+      --teal:#b87a28;  --teal-dim:#9c641a;
       --cream:#1a160e; --muted:#8a7e6a;
-      --border:rgba(120,80,0,0.14);
+      --border:rgba(60,130,75,0.16);
     }
     html.light body::after { opacity:0.018; }
     html.light #starfield  { opacity:0.2; }
@@ -186,7 +186,7 @@
       background:var(--bg2);border:1px solid var(--border);padding:36px 32px;
       transition:background .3s,border-color .3s;
     }
-    .stat-cell:hover{background:var(--bg3);border-color:rgba(240,165,0,.3);}
+    .stat-cell:hover{background:var(--bg3);border-color:rgba(122,207,138,.3);}
     .stat-number{font-family:var(--font-display);font-size:58px;line-height:1;color:var(--amber);margin-bottom:8px;}
     .stat-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);}
 
@@ -211,15 +211,15 @@
     }
     .product-card::after{
       content:'';position:absolute;inset:0;
-      background:radial-gradient(ellipse 70% 70% at 50% 120%,rgba(240,165,0,.05) 0%,transparent 70%);
+      background:radial-gradient(ellipse 70% 70% at 50% 120%,rgba(122,207,138,.05) 0%,transparent 70%);
       opacity:0;transition:opacity .5s;
     }
-    .product-card:hover{border-color:rgba(240,165,0,.28);}
+    .product-card:hover{border-color:rgba(122,207,138,.28);}
     .product-card:hover::before{transform:scaleX(1);}
     .product-card:hover::after{opacity:1;}
     .product-card.teal::before{background:linear-gradient(90deg,var(--teal),transparent);}
-    .product-card.teal::after{background:radial-gradient(ellipse 70% 70% at 50% 120%,rgba(0,201,167,.05) 0%,transparent 70%);}
-    .product-card.teal:hover{border-color:rgba(0,201,167,.28);}
+    .product-card.teal::after{background:radial-gradient(ellipse 70% 70% at 50% 120%,rgba(245,166,76,.05) 0%,transparent 70%);}
+    .product-card.teal:hover{border-color:rgba(245,166,76,.28);}
 
     .card-inner{position:relative;z-index:1;}
     .card-tag-row{display:flex;gap:8px;align-items:center;margin-bottom:28px;flex-wrap:wrap;}
@@ -241,18 +241,18 @@
     .card-link{
       display:inline-flex;align-items:center;gap:10px;
       font-family:var(--font-mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;
-      color:var(--amber);border-bottom:1px solid rgba(240,165,0,.3);padding-bottom:4px;
+      color:var(--amber);border-bottom:1px solid rgba(122,207,138,.3);padding-bottom:4px;
       transition:gap .2s,border-color .2s;
     }
     .card-link:hover{gap:16px;border-color:var(--amber);}
-    .teal .card-link{color:var(--teal);border-color:rgba(0,201,167,.3);}
+    .teal .card-link{color:var(--teal);border-color:rgba(245,166,76,.3);}
     .teal .card-link:hover{border-color:var(--teal);}
 
     .card-status-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--amber);animation:pulseA 2.5s ease-in-out infinite;margin-right:4px;}
     .card-status-dot.teal{background:var(--teal);animation:pulseT 2.5s ease-in-out infinite;}
     .card-status-dot.soon{background:var(--muted);animation:none;}
-    @keyframes pulseA{0%,100%{box-shadow:0 0 0 0 rgba(240,165,0,.6);}50%{box-shadow:0 0 0 5px rgba(240,165,0,0);}}
-    @keyframes pulseT{0%,100%{box-shadow:0 0 0 0 rgba(0,201,167,.6);}50%{box-shadow:0 0 0 5px rgba(0,201,167,0);}}
+    @keyframes pulseA{0%,100%{box-shadow:0 0 0 0 rgba(122,207,138,.6);}50%{box-shadow:0 0 0 5px rgba(122,207,138,0);}}
+    @keyframes pulseT{0%,100%{box-shadow:0 0 0 0 rgba(245,166,76,.6);}50%{box-shadow:0 0 0 5px rgba(245,166,76,0);}}
 
     .product-card.wide{grid-column:span 2;display:grid;grid-template-columns:1fr 1fr;gap:60px;}
     .product-card.wide .card-inner{grid-column:1;}
@@ -264,7 +264,7 @@
     .pricing-row:last-child{border-bottom:none;}
     .pricing-cell{padding:13px 14px;font-family:var(--font-mono);font-size:11px;color:var(--muted);border-right:1px solid var(--border);}
     .pricing-cell:last-child{border-right:none;}
-    .pricing-cell.header{color:var(--cream);font-weight:500;background:rgba(240,165,0,.06);}
+    .pricing-cell.header{color:var(--cream);font-weight:500;background:rgba(122,207,138,.06);}
     .pricing-cell .check{color:var(--teal);}
     .pricing-cell .cross{color:var(--muted);opacity:.4;}
 
@@ -314,7 +314,7 @@
       transition:border-color .25s,background .25s,color .4s;
       resize:none;cursor:none;
     }
-    .form-input:focus,.form-textarea:focus{border-color:rgba(240,165,0,.5);background:var(--bg3);}
+    .form-input:focus,.form-textarea:focus{border-color:rgba(122,207,138,.5);background:var(--bg3);}
     .form-textarea{min-height:140px;}
     .form-submit{
       font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
@@ -562,10 +562,10 @@
           </div>
           <div class="card-icon">
             <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="4" y="6" width="20" height="28" rx="2" fill="none" stroke="#f0a500" stroke-width="1.5"/>
-              <rect x="32" y="22" width="20" height="28" rx="2" fill="none" stroke="#f0a500" stroke-width="1.5" opacity="0.5"/>
-              <text x="6" y="19" font-family="serif" font-size="11" fill="#f0a500">A</text>
-              <path d="M14 23 L17 28 L20 23 L23 28" stroke="#f0a500" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <rect x="4" y="6" width="20" height="28" rx="2" fill="none" stroke="#7acf8a" stroke-width="1.5"/>
+              <rect x="32" y="22" width="20" height="28" rx="2" fill="none" stroke="#7acf8a" stroke-width="1.5" opacity="0.5"/>
+              <text x="6" y="19" font-family="serif" font-size="11" fill="#7acf8a">A</text>
+              <path d="M14 23 L17 28 L20 23 L23 28" stroke="#7acf8a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
             </svg>
           </div>
           <h3 class="card-title">Just Blackjack</h3>
@@ -589,8 +589,8 @@
           </div>
           <div class="card-icon">
             <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <text x="4" y="34" font-family="serif" font-size="30" fill="#00c9a7" opacity="0.9">あ</text>
-              <text x="30" y="22" font-family="serif" font-size="18" fill="#00c9a7" opacity="0.45">ア</text>
+              <text x="4" y="34" font-family="serif" font-size="30" fill="#F5A64C" opacity="0.9">あ</text>
+              <text x="30" y="22" font-family="serif" font-size="18" fill="#F5A64C" opacity="0.45">ア</text>
             </svg>
           </div>
           <h3 class="card-title">KanaType</h3>
@@ -615,9 +615,9 @@
           </div>
           <div class="card-icon">
             <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M10 44 Q10 16 28 10 Q46 16 46 44" stroke="#f0a500" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-              <circle cx="28" cy="28" r="7" stroke="#f0a500" stroke-width="1.5" fill="none"/>
-              <line x1="28" y1="10" x2="28" y2="18" stroke="#f0a500" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M10 44 Q10 16 28 10 Q46 16 46 44" stroke="#7acf8a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <circle cx="28" cy="28" r="7" stroke="#7acf8a" stroke-width="1.5" fill="none"/>
+              <line x1="28" y1="10" x2="28" y2="18" stroke="#7acf8a" stroke-width="1.5" stroke-linecap="round"/>
             </svg>
           </div>
           <h3 class="card-title">WhatsForDinner?</h3>
@@ -680,13 +680,13 @@
           </div>
           <div class="card-icon">
             <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="6" y="10" width="44" height="36" rx="3" stroke="#00c9a7" stroke-width="1.5" fill="none"/>
-              <line x1="6" y1="20" x2="50" y2="20" stroke="#00c9a7" stroke-width="1" opacity="0.5"/>
-              <circle cx="12" cy="15" r="2" fill="#00c9a7" opacity="0.6"/>
-              <circle cx="19" cy="15" r="2" fill="#00c9a7" opacity="0.4"/>
-              <circle cx="26" cy="15" r="2" fill="#00c9a7" opacity="0.2"/>
-              <text x="10" y="34" font-family="monospace" font-size="9" fill="#00c9a7" opacity="0.8">AHJ_DATA</text>
-              <text x="10" y="44" font-family="monospace" font-size="9" fill="#00c9a7" opacity="0.4">NEC 2023 / IFC</text>
+              <rect x="6" y="10" width="44" height="36" rx="3" stroke="#F5A64C" stroke-width="1.5" fill="none"/>
+              <line x1="6" y1="20" x2="50" y2="20" stroke="#F5A64C" stroke-width="1" opacity="0.5"/>
+              <circle cx="12" cy="15" r="2" fill="#F5A64C" opacity="0.6"/>
+              <circle cx="19" cy="15" r="2" fill="#F5A64C" opacity="0.4"/>
+              <circle cx="26" cy="15" r="2" fill="#F5A64C" opacity="0.2"/>
+              <text x="10" y="34" font-family="monospace" font-size="9" fill="#F5A64C" opacity="0.8">AHJ_DATA</text>
+              <text x="10" y="44" font-family="monospace" font-size="9" fill="#F5A64C" opacity="0.4">NEC 2023 / IFC</text>
             </svg>
           </div>
           <h3 class="card-title">QuickAHJ</h3>
@@ -713,15 +713,15 @@
           </div>
           <div class="card-icon">
             <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="6" y="10" width="44" height="32" rx="3" stroke="#f0a500" stroke-width="1.5" fill="none"/>
-              <rect x="14" y="18" width="14" height="10" rx="1" fill="#f0a500" opacity="0.85"/>
-              <rect x="30" y="18" width="14" height="10" rx="1" fill="#f0a500" opacity="0.2"/>
-              <line x1="30" y1="20" x2="44" y2="20" stroke="#f0a500" stroke-width="0.8" opacity="0.5"/>
-              <line x1="30" y1="23" x2="42" y2="23" stroke="#f0a500" stroke-width="0.8" opacity="0.5"/>
-              <line x1="30" y1="26" x2="44" y2="26" stroke="#f0a500" stroke-width="0.8" opacity="0.5"/>
-              <rect x="14" y="31" width="30" height="7" rx="1" fill="#f0a500" opacity="0.25"/>
-              <line x1="22" y1="42" x2="34" y2="42" stroke="#f0a500" stroke-width="1.5"/>
-              <line x1="20" y1="46" x2="36" y2="46" stroke="#f0a500" stroke-width="1.5"/>
+              <rect x="6" y="10" width="44" height="32" rx="3" stroke="#7acf8a" stroke-width="1.5" fill="none"/>
+              <rect x="14" y="18" width="14" height="10" rx="1" fill="#7acf8a" opacity="0.85"/>
+              <rect x="30" y="18" width="14" height="10" rx="1" fill="#7acf8a" opacity="0.2"/>
+              <line x1="30" y1="20" x2="44" y2="20" stroke="#7acf8a" stroke-width="0.8" opacity="0.5"/>
+              <line x1="30" y1="23" x2="42" y2="23" stroke="#7acf8a" stroke-width="0.8" opacity="0.5"/>
+              <line x1="30" y1="26" x2="44" y2="26" stroke="#7acf8a" stroke-width="0.8" opacity="0.5"/>
+              <rect x="14" y="31" width="30" height="7" rx="1" fill="#7acf8a" opacity="0.25"/>
+              <line x1="22" y1="42" x2="34" y2="42" stroke="#7acf8a" stroke-width="1.5"/>
+              <line x1="20" y1="46" x2="36" y2="46" stroke="#7acf8a" stroke-width="1.5"/>
             </svg>
           </div>
           <h3 class="card-title">BlurShare</h3>
@@ -747,10 +747,10 @@
           </div>
           <div class="card-icon">
             <svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="4" y="6" width="20" height="28" rx="2" fill="none" stroke="#f0a500" stroke-width="1.5"/>
-              <rect x="32" y="22" width="20" height="28" rx="2" fill="none" stroke="#f0a500" stroke-width="1.5" opacity="0.5"/>
-              <text x="6" y="19" font-family="serif" font-size="11" fill="#f0a500">A</text>
-              <path d="M14 23 L17 28 L20 23 L23 28" stroke="#f0a500" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+              <rect x="4" y="6" width="20" height="28" rx="2" fill="none" stroke="#7acf8a" stroke-width="1.5"/>
+              <rect x="32" y="22" width="20" height="28" rx="2" fill="none" stroke="#7acf8a" stroke-width="1.5" opacity="0.5"/>
+              <text x="6" y="19" font-family="serif" font-size="11" fill="#7acf8a">A</text>
+              <path d="M14 23 L17 28 L20 23 L23 28" stroke="#7acf8a" stroke-width="1.2" fill="none" stroke-linecap="round"/>
             </svg>
           </div>
           <h3 class="card-title">Stay Tuned!</h3>
@@ -850,9 +850,9 @@
     initStars(200);
     function draw(){
       ctx.clearRect(0,0,W,H); frame++;
-      stars.forEach(function(s){ var a=(Math.sin(frame*s.spd+s.ph)*.4+.6)*s.a*.6; ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fillStyle='rgba(240,200,120,'+a+')'; ctx.fill(); });
-      var g=ctx.createRadialGradient(W*.7,H*.3,0,W*.7,H*.3,W*.45); g.addColorStop(0,'rgba(240,165,0,.025)'); g.addColorStop(1,'transparent'); ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
-      var g2=ctx.createRadialGradient(W*.2,H*.8,0,W*.2,H*.8,W*.4); g2.addColorStop(0,'rgba(0,201,167,.018)'); g2.addColorStop(1,'transparent'); ctx.fillStyle=g2; ctx.fillRect(0,0,W,H);
+      stars.forEach(function(s){ var a=(Math.sin(frame*s.spd+s.ph)*.4+.6)*s.a*.6; ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2); ctx.fillStyle='rgba(180,220,180,'+a+')'; ctx.fill(); });
+      var g=ctx.createRadialGradient(W*.7,H*.3,0,W*.7,H*.3,W*.45); g.addColorStop(0,'rgba(122,207,138,.025)'); g.addColorStop(1,'transparent'); ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+      var g2=ctx.createRadialGradient(W*.2,H*.8,0,W*.2,H*.8,W*.4); g2.addColorStop(0,'rgba(245,166,76,.018)'); g2.addColorStop(1,'transparent'); ctx.fillStyle=g2; ctx.fillRect(0,0,W,H);
       requestAnimationFrame(draw);
     }
     draw();
